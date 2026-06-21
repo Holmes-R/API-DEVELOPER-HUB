@@ -1,0 +1,57 @@
+name: Daily Contribution Automation
+
+on:
+  schedule:
+    - cron: '0 10 * * *' # Runs daily at 10:00 UTC (around afternoon in IST)
+  workflow_dispatch:     # Allows you to trigger it manually from the Actions tab
+
+jobs:
+  contribute:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate random commits
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Array of realistic, non-suspicious commit messages
+          MESSAGES=(
+            "docs: update API documentation"
+            "chore: minor routine maintenance"
+            "fix: correct minor typo in comments"
+            "refactor: minor formatting adjustments"
+            "docs: clarify endpoint usage"
+            "chore: update internal configurations"
+            "style: apply code formatting rules"
+            "docs: update README examples"
+            "chore: clean up trailing whitespace"
+            "docs: fix markdown formatting"
+          )
+
+          # Pick a random number of commits between 1 and 3
+          NUM_COMMITS=$(( ( RANDOM % 3 ) + 1 ))
+          echo "Planning to make $NUM_COMMITS commit(s) today."
+
+          # Make sure the .github directory exists
+          mkdir -p .github
+
+          for i in $(seq 1 $NUM_COMMITS); do
+            # Pick a random message
+            RANDOM_MSG=${MESSAGES[$RANDOM % ${#MESSAGES[@]} ]}
+            
+            # Make a small change to a log file
+            echo "Update on $(date)" >> .github/activity.log
+            
+            git add .github/activity.log
+            git commit -m "$RANDOM_MSG"
+          done
+          
+      - name: Push changes
+        run: |
+          git push
