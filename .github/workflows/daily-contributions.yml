@@ -18,7 +18,7 @@ jobs:
       - name: Generate random commits
         run: |
           git config --global user.name "Holmes-R"
-          git config --global user.email "hariharanrameshbabu2004@gmail.com"
+          git config --global user.email "128469639+Holmes-R@users.noreply.github.com"
           
           # Array of realistic, non-suspicious commit messages
           MESSAGES=(
@@ -54,4 +54,5 @@ jobs:
           
       - name: Push changes
         run: |
+          git remote set-url origin https://Holmes-R:${{ secrets.PAT }}@github.com/Holmes-R/API-DEVELOPER-HUB.git
           git push
